@@ -1,0 +1,83 @@
+// Copyright 2018
+// 
+// Under MIT License.
+
+syntax = "proto3";
+
+package ratings;
+
+// Ratings service enables users to rate correlated events.
+service Ratings {
+
+    // RecordBinaryEvents records a stream of BinaryEvent messages and 
+    // returns a summary of total recorded events.
+    rpc RecordBinaryEvents(stream BinaryEvent) returns (BinaryEventsSummary) {}
+
+    // ListBinaryEvents accepts a stream of BinaryEventSource messages and
+    // responds with a stream of BinaryEvent messages.
+    rpc ListBinaryEvents(stream BinaryEventSource) returns (stream BinaryEvent) {}
+
+    // VoteBinaryEvent accepts a BinaryVote and returns a BinaryVoteSummary.
+    //
+    // It enables a user to vote on a binary event.
+    rpc VoteBinaryEvent(BinaryVote) returns (BinaryVoteSummary) {}
+}
+
+// BinaryEvents are rateable real life events, which can either 
+// be rated up or down.
+// 
+// for e.g.
+// Reddits which can be rated up or down
+// Tweets which can be rated up or down
+// YouTube videos can be rated  up or down.
+message BinaryEvent {
+    uint64  event_id = 1; // event id,  auto generated.
+    bytes   key = 2; // a key identifying the author of the event
+    bytes   event_data = 3; // event content
+    string  event_source = 4; // event source, e.g. youtube, reddit, tweet
+    uint64  ratings_up = 5; // total count this event was rated up.
+    uint64  ratings_down = 6; // total count this event was rated down.
+
+    // UserRatingPair is a key value pair with key as user and value
+    // as the vote for this event.
+    message UserRatingPair {
+        bytes       key = 1;
+        BinaryVote  vote = 2;
+    }
+
+    repeated UserRatingPair ratings = 7;
+}
+
+// BinaryEventSource contains the event source which can be used
+// to list events pertaining to a specific source.
+message BinaryEventSource {
+    string event_source = 1;
+}
+
+// BinaryVote permits a user to either vote up or down an event.
+message BinaryVote {
+    uint64      event_id = 1; //the event
+    bytes       key = 2; // user key
+
+    // Type identifies whether a user votes up or down.
+    enum Type {
+        up      = 0;
+        down    = 1;
+    }
+
+    Type        type = 3;
+    Timestamp   when = 4;
+}
+
+// BinaryEventsSummary is received in response to RecordBinaryEvents.
+//
+// It contains the total counts of events successfully recorded.
+message BinaryEventsSummary {
+    uint64 count = 1; // total count of events.
+}
+
+// BinaryVoteSummary is received in responmse to RecordBinaryVote
+message BinaryVoteSummary {
+    bool    status = 1;     // success/ failure
+    string  message = 2;    // status message
+}
