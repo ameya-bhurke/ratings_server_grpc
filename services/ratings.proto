@@ -6,6 +6,8 @@ syntax = "proto3";
 
 package ratings;
 
+import "google/protobuf/timestamp.proto";
+
 // Ratings service enables users to rate correlated events.
 service Ratings {
 
@@ -56,8 +58,8 @@ message BinaryEventSource {
 
 // BinaryVote permits a user to either vote up or down an event.
 message BinaryVote {
-    uint64      event_id = 1; //the event
-    bytes       key = 2; // user key
+    uint64                      event_id = 1; //the event
+    bytes                       key = 2; // user key
 
     // Type identifies whether a user votes up or down.
     enum Type {
@@ -65,8 +67,8 @@ message BinaryVote {
         down    = 1;
     }
 
-    Type        type = 3;
-    Timestamp   when = 4;
+    Type                        type = 3;
+    google.protobuf.Timestamp   when = 4;
 }
 
 // BinaryEventsSummary is received in response to RecordBinaryEvents.
