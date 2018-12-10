@@ -6,8 +6,6 @@ syntax = "proto3";
 
 package ratings;
 
-import "google/protobuf/timestamp.proto";
-
 // Ratings service enables users to rate correlated events.
 service Ratings {
 
@@ -68,7 +66,7 @@ message BinaryVote {
     }
 
     Type                        type = 3;
-    google.protobuf.Timestamp   when = 4;
+    uint64   when = 4;
 }
 
 // BinaryEventsSummary is received in response to RecordBinaryEvents.
