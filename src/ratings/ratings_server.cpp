@@ -11,6 +11,7 @@
 #include <grpcpp/server_context.h>
 #include <grpcpp/security/server_credentials.h>
 #include "ratings.grpc.pb.h"
+#include "ratings_server.h"
 
 namespace ratings{
 
@@ -48,4 +49,18 @@ public:
     }
         
 }; // end class ratings_server_impl
+
+void run_server()
+{
+    std::string srv_addr("localhost:50051");
+    ratings_server_impl service;
+
+    grpc::ServerBuilder builder;
+    builder.AddListeningPort(srv_addr, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    std::cout << "ratings server up and running on: " << srv_addr << std::endl;   
+    server->Wait();
+}
+
 } // end namespace ratings
