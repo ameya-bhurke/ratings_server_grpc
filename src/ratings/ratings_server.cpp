@@ -4,63 +4,56 @@
  * Licensed under MIT License.
  * 
  */
-
-#include <grpc/grpc.h>
-#include <grpcpp/server.h>
-#include <grpcpp/server_builder.h>
-#include <grpcpp/server_context.h>
-#include <grpcpp/security/server_credentials.h>
-#include "ratings.grpc.pb.h"
 #include "ratings_server.h"
 
-namespace ratings{
-
-// A simple implementation of the ratings server.
-class ratings_server_impl final : public ratings::Ratings::Service 
+namespace ratings
 {
-public:
 
-    grpc::Status RecordBinaryEvents(
+    grpc::Status ratings_server_impl::RecordBinaryEvents(
         grpc::ServerContext* ctx,
         grpc::ServerReader<ratings::BinaryEvent>* reader,
         ratings::BinaryEventsSummary* summary
-    ) override
+    ) 
     {
         // TODO: implement me.
+        std::cout << "Called RecordBinaryEvents " << std::endl; 
         summary->set_count(0);
         return grpc::Status::OK;      
     } 
 
-    grpc::Status ListBinaryEvents(
+    grpc::Status ratings_server_impl::ListBinaryEvents(
         grpc::ServerContext* ctx,
         grpc::ServerReaderWriter<ratings::BinaryEvent, ratings::BinaryEventSource>* rw_stream
-    ) override
+    ) 
     {
+        std::cout << "Called ListBinaryEvents " << std::endl; 
         return grpc::Status::OK;
     }
 
-    grpc::Status VoteBinaryEvent(
+    grpc::Status ratings_server_impl::VoteBinaryEvent(
         grpc::ServerContext* ctx,
         const ratings::BinaryVote* vote,
         ratings::BinaryVoteSummary* summary
-    ) override
+    ) 
     {
+        std::cout << "Called VoteBinaryEvent " << std::endl;
+        std::cout << vote->event_id() << std::endl;
+        std::cout << vote->when() << std::endl;
         return grpc::Status::OK;
     }
-        
-}; // end class ratings_server_impl
+       
 
-void run_server()
-{
-    std::string srv_addr("localhost:50051");
-    ratings_server_impl service;
+    void run_server()
+    {
+        std::string srv_addr("localhost:50051");
+        ratings_server_impl service;
 
-    grpc::ServerBuilder builder;
-    builder.AddListeningPort(srv_addr, grpc::InsecureServerCredentials());
-    builder.RegisterService(&service);
-    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-    std::cout << "ratings server up and running on: " << srv_addr << std::endl;   
-    server->Wait();
-}
+        grpc::ServerBuilder builder;
+        builder.AddListeningPort(srv_addr, grpc::InsecureServerCredentials());
+        builder.RegisterService(&service);
+        std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+        std::cout << "ratings server up and running on: " << srv_addr << std::endl;   
+        server->Wait();
+    }
 
 } // end namespace ratings

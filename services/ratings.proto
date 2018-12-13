@@ -56,8 +56,8 @@ message BinaryEventSource {
 
 // BinaryVote permits a user to either vote up or down an event.
 message BinaryVote {
-    uint64                      event_id = 1; //the event
-    bytes                       key = 2; // user key
+    uint64   event_id = 1; //the event
+    bytes    key = 2; // user key
 
     // Type identifies whether a user votes up or down.
     enum Type {
@@ -65,7 +65,7 @@ message BinaryVote {
         down    = 1;
     }
 
-    Type                        type = 3;
+    Type     type = 3;
     uint64   when = 4;
 }
 
