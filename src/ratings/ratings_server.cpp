@@ -56,4 +56,11 @@ namespace ratings
         server->Wait();
     }
 
+    void start_async_processor()
+    {
+        ratings::Ratings::AsyncService* service;
+        grpc::ServerCompletionQueue* serverQ;
+        grpc::ServerContext ctx;
+    }
+
 } // end namespace ratings

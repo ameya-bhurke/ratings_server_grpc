@@ -38,6 +38,8 @@ public:
         
 }; // end class ratings_server_impl
 
+void start_async_processor();
+
 void run_server();
 
 } // end namespace ratings
