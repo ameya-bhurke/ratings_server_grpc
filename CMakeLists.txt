@@ -6,7 +6,7 @@ project(ratings_server)
 find_package(Protobuf REQUIRED)
 #include_directories(${Protobuf_INCLUDE_DIR})
 
-set(CMAKE_CPP_FLAGS "${CMAKE_CPP_FLAGS} -std=c++11 pkg-config --cflags --lib protobuf grpc")
+set(CMAKE_CPP_FLAGS "${CMAKE_CPP_FLAGS} -std=c++17 pkg-config --cflags --lib protobuf grpc")
 
 include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
@@ -47,7 +47,6 @@ file(GLOB_RECURSE SRC_FILES src/**/*.cpp)
 
 add_custom_target(ratings_header ALL DEPENDS ${GENERATED_PROTOBUF_FILES})
 include_directories(${GENERATED_PROTOBUF_PATH})
-
 
 set(SOURCE_FILES src/main.cpp ${GENERATED_PROTOBUF_FILES} ${INC_FILES} ${SRC_FILES})
 link_libraries(protoc protobuf grpc++_unsecure gpr grpc++ )
