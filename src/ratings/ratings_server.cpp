@@ -6,6 +6,7 @@
  */
 
 #include "ratings_server.h"
+#include <algorithm>
 #include <unordered_map>
 #include <vector>
 
@@ -42,6 +43,25 @@ grpc::Status ratings::ratings_server_impl::ListBinaryEvents(
     grpc::ServerReaderWriter<ratings::BinaryEvent, ratings::BinaryEventSource>
         *rw_stream) {
   std::cout << "Called ListBinaryEvents " << std::endl;
+
+  ratings::BinaryEventSource binary_event_source;
+  while (rw_stream->Read(&binary_event_source)) {
+    uint64_t count{};
+    std::string event_source = binary_event_source.event_source();
+    auto events = evt_map.find(event_source);
+    if (events != evt_map.end()) {
+      auto events_v = events->second;
+      std::for_each(
+          events_v.begin(), events_v.end(),
+          [rw_stream, count](const ratings::BinaryEvent &binary_event) mutable {
+            rw_stream->Write(binary_event);
+            count++;
+          });
+    }
+    std::cout << "Total event count for source: " << event_source << " is "
+              << count << ".\n";
+  }
+
   return grpc::Status::OK;
 }
 
